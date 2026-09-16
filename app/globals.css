@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* Modo oscuro controlado por clase (next-themes agrega/quita .dark en <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --ink: #fafafa;
+  --surface: #ffffff;
+  --ink-2: #e4e4e7;
+  --text: #18181b;
+  --text-muted: #71717a;
+  --signal: #2563eb;
+  --signal-soft: #2563eb1a;
+  --status-ok: #059669;
+  --status-ok-soft: #0596691a;
+}
+
+.dark {
+  --ink: #09090b;
+  --surface: #18181b;
+  --ink-2: #27272a;
+  --text: #fafafa;
+  --text-muted: #a1a1aa;
+  --signal: #3b82f6;
+  --signal-soft: #3b82f61f;
+  --status-ok: #34d399;
+  --status-ok-soft: #34d3991f;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-ink-2: var(--ink-2);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-status-ok: var(--status-ok);
+  --color-status-ok-soft: var(--status-ok-soft);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading-outfit);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+::selection {
+  background: var(--signal-soft);
+  color: var(--text);
+}
+
+/* Foco visible consistente, nunca outline: none sin reemplazo */
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
