@@ -6,17 +6,7 @@ import { Menu, X } from "lucide-react";
 import { NAV_ITEMS } from "@/constants/navigation";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { profile } from "@/data/profile";
 import { cn } from "@/lib/utils";
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -54,9 +44,9 @@ export function Navbar() {
           className="flex cursor-pointer items-center rounded-full py-1 pl-1 pr-1"
           aria-label="Ir al inicio"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-signal font-heading text-xs font-semibold text-white">
-            {getInitials(profile.personal.name)}
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/logo-mark.svg" alt="" width={28} height={28} className="h-7 w-7 shrink-0 rounded-lg" />
+
         </button>
 
         <ul className="hidden items-center gap-1 md:flex">
