@@ -75,6 +75,8 @@ export interface PersonalProject {
   liveUrl?: string;
   /** Ruta a una captura real en /public/projects, si ya existe */
   screenshotSrc?: string;
+  /** "portrait" muestra la captura completa sin recortar (ej. poster promocional) */
+  screenshotAspect?: "portrait" | "landscape";
   /** Ruta a un video de demo en /public/projects (mudo, loop, autoplay) */
   videoSrc?: string;
   /** Poster/fallback del video, y dimensiones para reservar el layout correcto */

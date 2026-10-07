@@ -243,6 +243,31 @@ export const profile: Profile = {
 
   projects: [
     {
+      id: "proj-hwcollections",
+      name: "HW Collections",
+      tagline: "App móvil para coleccionistas de vehículos a escala — proyecto personal, disponible en Google Play",
+      objective:
+        "Crear una aplicación que permita a los coleccionistas registrar, organizar, consultar y analizar su colección de forma visual, sencilla y entretenida.",
+      features: [
+        "Gestión y registro de colecciones",
+        "Estadísticas y progreso de colección",
+        "Logros, trofeos, medallas, XP y niveles",
+        "Lista de deseos y planificación de compras",
+        "Organización por series, modelos y años",
+        "Búsqueda y consulta de vehículos",
+        "Perfiles y gestión de usuarios",
+        "Sistema Free y Premium",
+        "Autenticación y seguridad",
+        "Privacidad y seguridad de los datos",
+        "Publicación y distribución en Google Play"
+      ],
+      role: "Fui el líder técnico y único desarrollador del proyecto, responsable del diseño de arquitectura, desarrollo backend, aplicación móvil, base de datos, seguridad, despliegue, pruebas y publicación en Google Play.",
+      stack: ["Ionic", "Angular", "Capacitor", "Spring Boot", "PostgreSQL", "Flyway", "Docker", "REST API", "JWT", "Google Play"],
+      liveUrl: "https://landing-page-hwcollections.edysonfabian.workers.dev/",
+      screenshotSrc: "/projects/hw-collections-poster.png",
+      screenshotAspect: "portrait",
+    },
+    {
       id: "proj-sfc",
       name: "Migración de plataforma — Superintendencia Financiera de Colombia",
       tagline: "Migración de una plataforma regulatoria de misión crítica (vía Linktic S.A.S)",

@@ -109,8 +109,125 @@ placeholders (eligió no pasar su contenido real todavía).
   Gastón — ahora usa `profile.personal.name/role` y `SITE`, que son placeholders. Sigue
   sin tocarse el mecanismo, solo hereda el contenido actualizado.
 
+### Pendiente (resuelto en la Iteración 3)
+- ~~Que el usuario reemplace el contenido de ejemplo por el suyo real~~ → hecho.
+- Opcional: borrar `_removed-third-party-assets/` cuando el usuario confirme que no lo
+  necesita (sigue sin borrarse).
+
+## Iteración 3 — Contenido real a partir del CV (`CV_Edyson_Leal.pdf`)
+
+El usuario compartió su CV real y pidió reemplazar el contenido de ejemplo, con una
+regla clara: en experiencia, incluir **todas** las posiciones del CV pero con los
+puntos más relevantes de cada una (no pegar el CV completo), y no tocar lo que él ya
+había editado a mano en `data/profile.ts` / `constants/site.ts` (nombre, rol,
+ubicación, tagline, bio, `story.focusAreas`, redes, dominio).
+
+- **`types/profile.ts`**: agregada categoría `"Cloud"` a `TechCategory` (AWS/Azure/GCP
+  no tenían dónde mostrarse); `PersonalProject.githubUrl` ya era opcional (sin cambios
+  nuevos acá).
+- **`data/profile.ts`**:
+  - `experience`: las 10 posiciones reales del CV (Freelance actual → Amaris → GFT
+    Technologies → Linktic → Periferia IT Group → Consultec TI → TUR Colombia → WPOSS →
+    HI-TECH → WIFIX), orden cronológico descendente, 2–4 logros por rol reescritos de
+    forma directa en vez de copiar el texto largo "medido por X, haciendo Y" del CV.
+  - `technologies`: reemplazado el stack de ejemplo por el stack real (Java, Kotlin,
+    Spring Boot, Node.js, Python, Django, PHP, Go, Angular, AWS, Azure, GCP, Android
+    Studio, Ionic, MySQL, PostgreSQL, Oracle PL/SQL, H2, JUnit, Postman, Git, GitHub,
+    Bitbucket, Docker, Kubernetes, Apache Kafka, Gradle, Maven).
+  - `projects`: el CV no menciona proyectos personales, así que esta sección pasó a
+    mostrar 2 **casos de estudio reales** de su trabajo (migración SFC vía Linktic;
+    sistema de pagos vía GFT/Pexto Cobre) — sin `githubUrl`/`liveUrl` por ser trabajo de
+    cliente confidencial (los botones quedan deshabilitados, `ProjectMedia` muestra
+    "Capturas próximamente"). Eyebrow de la sección cambiado de "Proyectos personales"
+    a "Casos destacados" para que no sea engañoso.
+  - `achievements`, `stats`, `personal.yearsOfExperience` (3→7): actualizados con datos
+    reales del CV.
+  - `contact.emailEncoded`: regenerado a partir del email real
+    (`edysonleal3@gmail.com`) con `lib/obfuscation.ts` (sin tocar esa lógica) —
+    verificado con Playwright que el botón "Copiar email" copia el email real al
+    portapapeles.
+- **`components/sections/TechIcon.tsx`**: se agregaron los nuevos slugs de simple-icons
+  usados (Node.js, Express, Flutter, Kotlin, Swift, Android, Expo, PostgreSQL, MongoDB,
+  Firebase, Jest, Cypress, Docker, Figma, GitHub, Vercel, Angular, JavaScript, Python,
+  Django, PHP, Go, Bitbucket, Kubernetes, Apache Kafka, Gradle, Apache Maven,
+  Android Studio, Ionic, H2 Database).
+- **Íconos locales nuevos en `public/tech/`**: `aws.svg`, `azure.svg`, `oracle.svg` —
+  ninguno de los tres existe en el paquete `simple-icons` instalado, así que se
+  descargaron (vía `curl`) los SVG oficiales de Devicon (mismo origen/licencia MIT que
+  ya se usaba para `java.svg`).
+- **`components/sections/TechStack.tsx`**: agregada `"Cloud"` al `CATEGORY_ORDER`.
+- **`README.md`**: reescrito — ya no dice "contenido de ejemplo", documenta que los
+  casos destacados son trabajo de cliente sin capturas públicas.
+- Verificación: `tsc --noEmit` limpio, `npm run build` limpio, Playwright en
+  claro/oscuro/mobile sin errores de consola ni HTTP, prueba funcional de copiar email
+  real exitosa.
+- **Bug real encontrado y corregido durante esta iteración** (no por mí, por el
+  proceso de verificación con Playwright): un `npm run build` ejecutado mientras el
+  `next dev` seguía corriendo pisa el `.next` del servidor dev y lo deja sirviendo
+  chunks JS/CSS que ya no existen (404 en todo) — el sitio se ve en blanco. Desde
+  entonces, cada vez que se corre `npm run build` para verificar, el siguiente paso
+  obligatorio es: matar el proceso en el puerto 3000, borrar `.next`, y recién ahí
+  volver a levantar `npm run dev`. **Ver nota en `CLAUDE.md`.**
+
+## Iteración 4 — Ícono de marca ("EL") para favicon y navbar
+
+El usuario pidió usar un ícono de marca (cuadrado azul degradado con "EL" en blanco,
+mostrado como imagen pegada en el chat, sin ruta de archivo accesible) en dos lugares:
+la pestaña del navegador y el logo del navbar.
+
+- Como la imagen pegada no tenía ruta de archivo accesible, se recreó como SVG propio
+  (`public/brand/logo-mark.svg`): cuadrado redondeado, degradado azul diagonal, brillo
+  glossy superior, "EL" en blanco bold — visualmente muy cercano al original.
+- `app/icon.svg`: copia del mismo SVG, usando la convención de Next.js App Router para
+  favicon (Next la sirve automáticamente en `<link rel="icon">`, sin tocar el objeto
+  `metadata` de `app/layout.tsx`).
+- `app/favicon.ico`: regenerado desde cero (antes era el ícono genérico original del
+  template). Se renderizó el SVG a PNG en 16/32/48/64px con Playwright (Chromium
+  headless) y se empaquetó a mano en un contenedor ICO válido (formato documentado,
+  PNG embebido — soportado desde Windows Vista) con un script de Node ad-hoc, sin
+  dependencias nuevas.
+- `components/layout/Navbar.tsx`: el logo dejó de ser un `<span>` con iniciales
+  calculadas por CSS (`getInitials(profile.personal.name)`) y ahora es
+  `<img src="/brand/logo-mark.svg">`.
+- Verificado: `<link rel="icon">` resuelve a `favicon.ico` e `icon.svg` (200 en ambos),
+  `npm run build` limpio, captura de navbar en claro/oscuro.
+
+## Iteración 5 — Proyecto "HW Collections"
+
+El usuario pidió agregar un proyecto propio (app móvil para coleccionistas de
+vehículos a escala, publicada en Google Play), con una instrucción explícita: **no**
+poner link de GitHub, usar el link de la landing page en su lugar. Adjuntó un póster
+promocional de la app (esta vez con ruta de archivo accesible en
+`...\images\1.png`, a diferencia del ícono de la Iteración 4).
+
+- **`data/profile.ts`** → `projects`: nuevo proyecto `proj-hwcollections`, primero en
+  el array (es el único con link público real, a diferencia de los dos casos de
+  estudio de cliente). `liveUrl` apunta a
+  `https://landing-page-hwcollections.edysonfabian.workers.dev/`; `githubUrl` se dejó
+  sin definir a propósito → el botón "Ver en GitHub" queda deshabilitado
+  automáticamente (comportamiento ya existente en `ProjectCard`/`Button`, sin tocar
+  lógica). Stack: Ionic, Spring Boot, PostgreSQL, Flyway. Rol: líder técnico y único
+  desarrollador. Funcionalidades extraídas del póster (gestión de colección,
+  estadísticas, logros/XP, lista de deseos, organización por series/años, privacidad
+  on-device).
+- **`public/projects/hw-collections-poster.png`**: copia directa del póster
+  proporcionado por el usuario (archivo real, no recreado).
+- **Cambio de tipo/componente necesario**: el póster es una imagen promocional
+  vertical (1145×1374), no una captura de pantalla horizontal — forzarla al recorte
+  `aspect-video`/`object-cover` que usa el resto de las tarjetas la hubiera cortado
+  mal (perdiendo los mockups de teléfono). Se agregó
+  `PersonalProject.screenshotAspect?: "portrait" | "landscape"` en `types/profile.ts`
+  (mismo patrón que ya existía para video con `videoAspect`), y
+  `components/sections/ProjectMedia.tsx` ahora, cuando `screenshotAspect === "portrait"`,
+  muestra la imagen completa sin recortar (mismo tratamiento `object-contain` centrado
+  que ya se usaba para el video), en vez del recorte 16:9 por defecto. Comportamiento
+  por defecto sin cambios para proyectos que no seteen este campo.
+- Verificado: `tsc --noEmit` limpio, `npm run build` limpio, Playwright en
+  claro/oscuro/mobile (390px, sin scroll horizontal) — el póster se ve completo, sin
+  recortes, y el botón "Ver proyecto" lleva a la landing page real.
+
 ### Pendiente
-- Que el usuario reemplace el contenido de ejemplo por el suyo real en
-  `data/profile.ts` / `constants/site.ts` (ver checklist en `README.md`).
 - Opcional: borrar `_removed-third-party-assets/` cuando el usuario confirme que no lo
   necesita.
+- Opcional: cuando el usuario tenga capturas reales (no confidenciales) de los dos
+  casos de estudio de cliente, completar `screenshotSrc` en esos proyectos.

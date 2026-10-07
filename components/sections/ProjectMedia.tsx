@@ -25,6 +25,22 @@ export function ProjectMedia({ project }: ProjectMediaProps) {
     );
   }
 
+  if (project.screenshotSrc && project.screenshotAspect === "portrait") {
+    // Poster/captura completa (ej. material promocional): se muestra entera, sin recortar.
+    return (
+      <div className="flex justify-center border-b border-ink-2 bg-ink py-6">
+        <Image
+          src={project.screenshotSrc}
+          alt={`Captura del proyecto ${project.name}`}
+          width={480}
+          height={576}
+          sizes="(max-width: 768px) 80vw, 420px"
+          className="max-h-[420px] w-auto rounded-lg object-contain"
+        />
+      </div>
+    );
+  }
+
   if (project.screenshotSrc) {
     return (
       <div className="relative aspect-video w-full border-b border-ink-2 bg-ink">
